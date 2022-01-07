@@ -1,4 +1,4 @@
-module github.com/bozd4g/go-http-client
+module github.com/ngandalf/go-http-client
 
 go 1.13
 

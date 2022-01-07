@@ -5,6 +5,7 @@ import "net/http"
 // client is a struct who has BaseUrl property
 type client struct {
 	BaseUrl string
+	Token string
 }
 
 // Client is a interface who calls the methods

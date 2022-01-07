@@ -25,7 +25,7 @@ func TestInit(t *testing.T) {
 }
 
 func (s *TestSuite) SetupSuite() {
-	s.client = New("https://jsonplaceholder.typicode.com/")
+	s.client = New("https://jsonplaceholder.typicode.com/","test")
 }
 
 func (s *TestSuite) Test_GetRequest_ReturnsSuccess() {
@@ -203,7 +203,7 @@ func (s *TestSuite) Test_DeleteRequestWith_WhenRequestIsInvalid_ReturnsError() {
 
 func (s *TestSuite) Test_DoFunction_WhenMakeRequest_ReturnsError() {
 	var invalidUrl string
-	httpClient := New(invalidUrl)
+	httpClient := New(invalidUrl,"test")
 	request, err := httpClient.Get("posts/10")
 	require.NoError(s.T(), err)
 
@@ -227,7 +227,7 @@ func (s *TestSuite) Test_ToFunction_ReturnsSuccess() {
 }
 
 func (s *TestSuite) Test_ToFunction_WhenBodyIsInvalid_ReturnsError() {
-	httpClient := New("http://google.com/")
+	httpClient := New("http://google.com/","test")
 	request, err := httpClient.Get("qweqwe")
 	require.NoError(s.T(), err)
 

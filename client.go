@@ -10,8 +10,10 @@ import (
 )
 
 // New func returns a Client interface
-func New(baseUrl string) Client {
-	return &client{BaseUrl: baseUrl}
+func New(baseUrl string, token string) Client {
+	return &client{
+		BaseUrl: baseUrl,
+		Token: token}
 }
 
 // Get func returns a request
@@ -92,6 +94,13 @@ func (h client) DeleteWith(endpoint string, params interface{}) (*http.Request, 
 // Do func returns a response with your data
 func (h client) Do(request *http.Request) (Response, error) {
 	client := &http.Client{}
+
+	// Create a Bearer string by appending string access token
+        var bearer = "Bearer " +  h.Token
+
+	// add authorization header to the req
+	request.Header.Add("Authorization", bearer)
+
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
