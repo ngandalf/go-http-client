@@ -96,10 +96,10 @@ func (h client) Do(request *http.Request) (Response, error) {
 	client := &http.Client{}
 
 	// Create a Bearer string by appending string access token
-        var bearer = "Bearer " +  h.Token
+        var auth = "Token " +  h.Token
 
 	// add authorization header to the req
-	request.Header.Add("Authorization", bearer)
+	request.Header.Add("Authorization", auth)
 
 	response, err := client.Do(request)
 	if err != nil {
