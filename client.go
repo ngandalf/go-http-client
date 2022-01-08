@@ -5,11 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/http/httputil"
+	"time"
 
 	"github.com/google/go-querystring/query"
 )
+
+var timeout = time.Duration(2 * time.Second)
 
 // New func returns a Client interface
 func New(baseUrl string, token string) Client {
@@ -93,9 +97,20 @@ func (h client) DeleteWith(endpoint string, params interface{}) (*http.Request, 
 	return http.NewRequest(http.MethodDelete, h.BaseUrl+endpoint, bytes.NewBuffer(json))
 }
 
+func dialTimeout(network, addr string) (net.Conn, error) {
+	return net.DialTimeout(network, addr, timeout)
+}
+
 // Do func returns a response with your data
 func (h client) Do(request *http.Request) (Response, error) {
-	client := &http.Client{}
+
+	transport := http.Transport{
+		Dial: dialTimeout,
+	}
+
+	client := &http.Client{
+		Transport: &transport,
+	}
 
 	// Create a Bearer string by appending string access token
 	var auth = "Token " + h.Token
