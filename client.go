@@ -97,20 +97,27 @@ func (h client) DeleteWith(endpoint string, params interface{}) (*http.Request, 
 	return http.NewRequest(http.MethodDelete, h.BaseUrl+endpoint, bytes.NewBuffer(json))
 }
 
-func dialTimeout(network, addr string) (net.Conn, error) {
-	return net.DialTimeout(network, addr, timeout)
-}
+//func dialTimeout(network, addr string) (net.Conn, error) {
+//	return net.DialTimeout(network, addr, timeout)
+//}
 
 // Do func returns a response with your data
 func (h client) Do(request *http.Request) (Response, error) {
 
 	fmt.Println("define transport")
 	transport := http.Transport{
-		Dial: dialTimeout,
+		//Dial: dialTimeout,
+		Dial: (&net.Dialer{
+			// Modify the time to wait for a connection to establish
+			Timeout:   1 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).Dial,
+		TLSHandshakeTimeout: 10 * time.Second,
 	}
 
 	client := &http.Client{
 		Transport: &transport,
+		Timeout:   4 * time.Second,
 	}
 
 	// Create a Bearer string by appending string access token
@@ -125,10 +132,13 @@ func (h client) Do(request *http.Request) (Response, error) {
 		fmt.Printf("%s\n", dump)
 	}
 
+	start := time.Now()
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
+	elapsed := time.Since(start)
+	fmt.Printf("request: %v %v, Time taken: %v\n", request.Method, request.RequestURI, elapsed)
 
 	defer response.Body.Close()
 
