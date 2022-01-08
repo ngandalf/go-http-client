@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/google/go-querystring/query"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/google/go-querystring/query"
 )
 
 // New func returns a Client interface
 func New(baseUrl string, token string) Client {
 	return &client{
 		BaseUrl: baseUrl,
-		Token: token}
+		Token:   token}
 }
 
 // Get func returns a request
@@ -96,9 +97,10 @@ func (h client) Do(request *http.Request) (Response, error) {
 	client := &http.Client{}
 
 	// Create a Bearer string by appending string access token
-        var auth = "Token " +  h.Token
+	var auth = "Token " + h.Token
 
 	// add authorization header to the req
+	request.Header.Add("Accept", "application/json")
 	request.Header.Add("Authorization", auth)
 
 	response, err := client.Do(request)
