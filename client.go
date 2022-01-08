@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 
 	"github.com/google/go-querystring/query"
 )
@@ -102,6 +103,11 @@ func (h client) Do(request *http.Request) (Response, error) {
 	// add authorization header to the req
 	request.Header.Add("Accept", "application/json")
 	request.Header.Add("Authorization", auth)
+
+	dump, err := httputil.DumpRequestOut(request, true)
+	if err == nil {
+		fmt.Printf("%s\n", dump)
+	}
 
 	response, err := client.Do(request)
 	if err != nil {
