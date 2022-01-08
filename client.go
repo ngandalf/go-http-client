@@ -104,6 +104,7 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 // Do func returns a response with your data
 func (h client) Do(request *http.Request) (Response, error) {
 
+	fmt.Println("define transport")
 	transport := http.Transport{
 		Dial: dialTimeout,
 	}
