@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"net/http/httputil"
 	"time"
@@ -104,21 +103,32 @@ func (h client) DeleteWith(endpoint string, params interface{}) (*http.Request, 
 // Do func returns a response with your data
 func (h client) Do(request *http.Request) (Response, error) {
 
-	fmt.Println("define transport")
-	transport := http.Transport{
-		//Dial: dialTimeout,
-		Dial: (&net.Dialer{
-			// Modify the time to wait for a connection to establish
-			Timeout:   1 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 10 * time.Second,
-	}
+	fmt.Println("define new transport")
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.MaxIdleConns = 100
+	t.MaxConnsPerHost = 100
+	t.MaxIdleConnsPerHost = 100
 
 	client := &http.Client{
-		Transport: &transport,
-		Timeout:   4 * time.Second,
+		Timeout:   10 * time.Second,
+		Transport: t,
 	}
+	/*
+		transport := http.Transport{
+			//Dial: dialTimeout,
+			Dial: (&net.Dialer{
+				// Modify the time to wait for a connection to establish
+				Timeout:   1 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout: 10 * time.Second,
+		}
+
+		client := &http.Client{
+			Transport: &transport,
+			Timeout:   4 * time.Second,
+		}
+	*/
 
 	// Create a Bearer string by appending string access token
 	var auth = "Token " + h.Token
