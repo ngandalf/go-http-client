@@ -125,6 +125,7 @@ func (h client) Do(request *http.Request) (Response, error) {
 
 	// add authorization header to the req
 	request.Header.Add("Accept", "application/json")
+	request.Header.Add("Content-Type", "application/json")
 	request.Header.Add("Authorization", auth)
 
 	dump, err := httputil.DumpRequestOut(request, true)
@@ -138,7 +139,7 @@ func (h client) Do(request *http.Request) (Response, error) {
 		return nil, err
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("request: %v %v, Time taken: %v\n", request.Method, request.RequestURI, elapsed)
+	fmt.Println("Time taken: %v\n", elapsed)
 
 	defer response.Body.Close()
 
